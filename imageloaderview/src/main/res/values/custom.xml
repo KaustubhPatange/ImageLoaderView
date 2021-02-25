@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ImageLoaderView">
+        <attr name="shimmering" format="boolean" />
+        <!-- This will only be shown when ImageView is shimmering -->
+        <attr name="overlay_drawable" format="reference|color"/>
+        <attr name="overlay_drawable_padding" format="dimension" />
+        <attr name="overlay_drawable_tint" format="reference|color" />
+        <attr name="overlay_drawable_secondary_tint" format="reference|color" />
+        <!-- Defines how long the animation should be running in milliseconds -->
+        <attr name="anim_duration" format="integer" />
+        <attr name="corner_radius" format="dimension" />
+        <attr name="ripple_color" format="reference|color" />
+        <!--  This will show ripple effect after click -->
+        <attr name="selectable" format="boolean" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="overlay_tinting" format="boolean" />
+    </declare-styleable>
+</resources>

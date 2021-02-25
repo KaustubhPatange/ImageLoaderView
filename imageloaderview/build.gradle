@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'maven-publish'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 30
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += [
+                "-Xexplicit-api=strict"
+        ]
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    api "com.facebook.shimmer:shimmer:0.5.0"
+}
+
+ext {
+    PUBLISH_GROUP_ID = 'io.github.kaustubhpatange'
+    PUBLISH_ARTIFACT_ID = 'imageloaderview'
+    PUBLISH_VERSION = library_version
+    PUBLISH_DESCRIPTION = 'An ImageView with cool loading effects eg: Shimmer'
+    PUBLISH_URL = 'https://github.com/KaustubhPatange/ImageLoaderView'
+    LICENSE_NAME = 'The Apache License, Version 2.0'
+    LICENSE_URL = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+    DEVELOPER_ID = 'kp2016'
+    DEVELOPER_NAME = 'Kaustubh Patange'
+    DEVELOPER_EMAIL = 'developerkp16@gmail.com'
+    SCM_CONNECTION = 'scm:git:github.com/KaustubhPatange/ImageLoaderView.git'
+    SCM_DEVELOPER_CONNECTION = 'scm:git:ssh://github.com/KaustubhPatange/ImageLoaderView.git'
+    SCM_URL = 'https://github.com/KaustubhPatange/ImageLoaderView/tree/master'
+    NEXUS_STAGING_ID = 'c51d602c035a' // dummy replace with your own.
+}

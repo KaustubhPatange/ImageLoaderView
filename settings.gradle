@@ -1,0 +1,3 @@
+include ':imageloaderview'
+include ':sample'
+rootProject.name = "ImageLoaderView"
