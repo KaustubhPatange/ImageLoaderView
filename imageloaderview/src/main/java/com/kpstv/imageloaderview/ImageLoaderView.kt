@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ViewConfiguration
@@ -47,6 +46,10 @@ public class ImageLoaderView @JvmOverloads constructor(
      */
     public var animDuration: Long = 1200
 
+    /**
+     * Set the per cycle animation duration for overlay tint animation.
+     */
+    public var overlayTintAnimDuration: Long = 700
     /**
      * Configure ripple color to be shown. Shown only when [selectable] is true.
      */
@@ -136,6 +139,7 @@ public class ImageLoaderView @JvmOverloads constructor(
             overlayDrawableTint = getColor(R.styleable.ImageLoaderView_overlay_drawable_tint, -1)
             overlayDrawableSecondaryTint = getColor(R.styleable.ImageLoaderView_overlay_drawable_secondary_tint, -1)
             overlayDrawablePadding = getDimension(R.styleable.ImageLoaderView_overlay_drawable_padding, 0f)
+            overlayTintAnimDuration = getInteger(R.styleable.ImageLoaderView_overlay_tinting_duration, 700).toLong()
             selectable = getBoolean(R.styleable.ImageLoaderView_selectable, false)
 
             val cornerRadius = getDimension(R.styleable.ImageLoaderView_corner_radius, 0f)
@@ -150,10 +154,27 @@ public class ImageLoaderView @JvmOverloads constructor(
         ripplePaint.color = rippleColor
     }
 
+    /**
+     * Stops all the side effects going on.
+     *
+     * You need to call this manually to draw the image to the screen when
+     * you don't call [setImageDrawable] with [animate] property to true.
+     */
+    public fun stopAllSideEffects() {
+        isShimmering = false
+        isOverlayAlphaTinting = false
+    }
+
+    /**
+     * Directly set a overlay from drawable resource id.
+     */
     public fun setOverlayResource(@DrawableRes resId: Int) {
         overlayDrawable = ContextCompat.getDrawable(context, resId)
     }
 
+    /**
+     * After animation is complete it will automatically stop any running side effects eg: Shimmer.
+     */
     public fun setImageDrawable(
         drawable: Drawable?,
         animate: Boolean,
@@ -165,6 +186,9 @@ public class ImageLoaderView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * After animation is complete it will automatically stop any running side effects eg: Shimmer.
+     */
     public fun setImageBitmap(bm: Bitmap?, animate: Boolean, doAfterEnd: () -> Unit = {}) {
         setImageBitmap(bm)
         if (animate) {
@@ -172,6 +196,9 @@ public class ImageLoaderView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * After animation is complete it will automatically stop any running side effects eg: Shimmer.
+     */
     public fun setImageResource(resId: Int, animate: Boolean, doAfterEnd: () -> Unit = {}) {
         setImageResource(resId)
         if (animate) {
@@ -289,8 +316,7 @@ public class ImageLoaderView @JvmOverloads constructor(
             }
             doOnEnd {
                 isLoading = false
-                isShimmering = false
-                isOverlayAlphaTinting = false
+                stopAllSideEffects()
                 doAfterEnd()
             }
             start()
@@ -335,7 +361,7 @@ public class ImageLoaderView @JvmOverloads constructor(
                    invalidate()
                }
             }
-            duration = 800
+            duration = overlayTintAnimDuration
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
             start()

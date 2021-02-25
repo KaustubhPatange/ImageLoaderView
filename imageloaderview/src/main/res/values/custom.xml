@@ -15,5 +15,7 @@
         <attr name="selectable" format="boolean" />
         <attr name="backgroundColor" format="color" />
         <attr name="overlay_tinting" format="boolean" />
+        <!-- Defines how long the overlay tint animation should be running in milliseconds -->
+        <attr name="overlay_tinting_duration" format="integer"/>
     </declare-styleable>
 </resources>

@@ -18,18 +18,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Fake load of the image
         loadImage(imageLoaderView1, R.drawable.image1)
         loadImage(imageLoaderView2, R.drawable.image2)
         loadImage(imageLoaderView3, R.drawable.image3)
-        loadImage(imageLoaderView4, R.drawable.image4)
-        loadImage(imageLoaderView5, R.drawable.image5)
-        loadImage(imageLoaderView6, R.drawable.image6)
+        loadImageWithoutAnimation(imageLoaderView4, R.drawable.image4)
+        loadImageWithoutAnimation(imageLoaderView5, R.drawable.image5)
+        loadImageWithoutAnimation(imageLoaderView6, R.drawable.image6)
     }
 
     private fun loadImage(imageView: ImageLoaderView, resId: Int) {
         imageView.postDelayed({
             val cover = ContextCompat.getDrawable(this, resId)
             imageView.setImageDrawable(cover, true)
+        }, 5000)
+    }
+
+    private fun loadImageWithoutAnimation(imageView: ImageLoaderView, resId: Int) {
+        imageView.postDelayed({
+            val cover = ContextCompat.getDrawable(this, resId)
+            imageView.setImageDrawable(cover)
+            imageView.stopAllSideEffects()
         }, 5000)
     }
 }

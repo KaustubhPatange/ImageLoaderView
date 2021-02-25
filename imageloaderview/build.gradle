@@ -56,3 +56,5 @@ ext {
     SCM_URL = 'https://github.com/KaustubhPatange/ImageLoaderView/tree/master'
     NEXUS_STAGING_ID = 'c51d602c035a' // dummy replace with your own.
 }
+
+apply from: "${rootProject.projectDir}/gradle/publish.gradle"
