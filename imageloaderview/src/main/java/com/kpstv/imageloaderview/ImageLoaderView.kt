@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -53,9 +54,10 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * Configure ripple color to be shown. Shown only when [selectable] is true.
      */
-    public var rippleColor: Int = ColorUtils.setAlphaComponent(Color.WHITE, 50)
+    public var rippleColor: Int = Color.WHITE
         set(value) {
-            field = ColorUtils.setAlphaComponent(value, 50)
+            field = value
+            rippleDrawable.updateColor(field)
         }
 
     /**
@@ -88,10 +90,6 @@ public class ImageLoaderView @JvmOverloads constructor(
 
     private var viewBackgroundColor: Int = Color.GRAY
 
-    private val ripplePaint = Paint().apply {
-        style = Paint.Style.FILL
-    }
-
     private var isLoading = false
         set(value) {
             if (field != value) {
@@ -110,8 +108,7 @@ public class ImageLoaderView @JvmOverloads constructor(
     private var cornerArray = FloatArray(8)
     private val cornerRectF = RectF() // to support API 19
     private val cornerPath = Path()
-    private val ripplePath = Path()
-    private var isRippleDrawn: Boolean = false
+    private val rippleDrawable = RippleDrawable()
 
     private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
@@ -127,6 +124,7 @@ public class ImageLoaderView @JvmOverloads constructor(
     init {
         shimmerDrawable.setShimmer(Shimmer.AlphaHighlightBuilder().build())
         shimmerDrawable.callback = this
+        rippleDrawable.callback = this
 
         context.withStyledAttributes(attrs, R.styleable.ImageLoaderView, defStyleAttr) {
             animDuration = getInteger(R.styleable.ImageLoaderView_anim_duration, 1200).toLong()
@@ -151,7 +149,7 @@ public class ImageLoaderView @JvmOverloads constructor(
             isOverlayAlphaTinting = getBoolean(R.styleable.ImageLoaderView_overlay_tinting, false)
         }
 
-        ripplePaint.color = rippleColor
+        rippleDrawable.updateColor(rippleColor)
     }
 
     /**
@@ -217,6 +215,7 @@ public class ImageLoaderView @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
         maxDimension = max(width, height)
         shimmerDrawable.setBounds(left, top, right, bottom)
+        rippleDrawable.onLayout(width, height)
         if (overlayDrawableTint != -1 && overlayDrawable != null)
             Compat.setTint(overlayDrawable!!, overlayDrawableTint)
         cornerRectF.set(0f, 0f, width.toFloat(), height.toFloat())
@@ -252,33 +251,32 @@ public class ImageLoaderView @JvmOverloads constructor(
                 invalidate()
             }
         }
-        if (isRippleDrawn) {
-            canvas.drawPath(ripplePath, ripplePaint)
-        }
+
+        rippleDrawable.draw(canvas)
 
         canvas.restoreToCount(cornerRestore)
     }
 
     private fun isAnyEffectOnGoing() : Boolean = isShimmering || isOverlayAlphaTinting
 
-    private var pointX: Float = 0f
-    private var pointY: Float = 0f
+    private var pointX = 0f
+    private var pointY = 0f
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null && isClickable) {
             gestureDetector.onTouchEvent(event)
+
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     pointX = event.x
                     pointY = event.y
-                    startClickAnimation()
+                    rippleDrawable.start(event.x, event.y)
                 }
                 MotionEvent.ACTION_MOVE -> {
-                   if (abs(event.x - pointX) > ViewConfiguration.getTouchSlop()
-                       || abs(event.y - pointY) > ViewConfiguration.getTouchSlop()) {
-                       isRippleDrawn = false
-                       invalidate()
-                   }
+                    if (abs(event.x - pointX) > ViewConfiguration.getTouchSlop()
+                        || abs(event.y - pointY) > ViewConfiguration.getTouchSlop()) {
+                        rippleDrawable.cancel()
+                    }
                 }
             }
             return isClickable
@@ -319,24 +317,6 @@ public class ImageLoaderView @JvmOverloads constructor(
                 stopAllSideEffects()
                 doAfterEnd()
             }
-            start()
-        }
-    }
-
-    private fun startClickAnimation() {
-        isRippleDrawn = true
-        ValueAnimator.ofFloat(maxDimension / 3f, maxDimension * 1.5f).apply {
-            addUpdateListener {
-                val rippleRadius = it.animatedValue as Float
-                ripplePath.addCircle(pointX, pointY, rippleRadius, Path.Direction.CW)
-                invalidate()
-            }
-            doOnEnd {
-                ripplePath.reset()
-                isRippleDrawn = false
-                invalidate()
-            }
-            duration = 260
             start()
         }
     }
