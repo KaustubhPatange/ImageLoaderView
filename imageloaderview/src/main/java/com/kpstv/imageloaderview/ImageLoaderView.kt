@@ -128,7 +128,7 @@ public class ImageLoaderView @JvmOverloads constructor(
         context.withStyledAttributes(attrs, R.styleable.ImageLoaderView, defStyleAttr) {
             animDuration = getInteger(R.styleable.ImageLoaderView_anim_duration, 1200).toLong()
             viewBackgroundColor = getColor(R.styleable.ImageLoaderView_backgroundColor, Color.GRAY)
-            overlayDrawable = getDrawable(R.styleable.ImageLoaderView_overlay_drawable)
+            overlayDrawable = getDrawable(R.styleable.ImageLoaderView_overlay_drawable)?.mutate()
             if (hasValue(R.styleable.ImageLoaderView_ripple_color)) {
                 val color = getColor(R.styleable.ImageLoaderView_ripple_color, Color.WHITE)
                 rippleColor = color
