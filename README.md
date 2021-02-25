@@ -24,7 +24,7 @@ The repository contains the [sample](sample/) project which is basically the abo
     android:layout_height="..." />
 ```
 
-**Create a shimmer load effect**
+- #### Create a shimmer load effect
 
 ```xml
 <com.kpstv.imageloaderview.ImageLoaderView
@@ -35,7 +35,45 @@ The repository contains the [sample](sample/) project which is basically the abo
    app:overlay_drawable_tint="?attr/colorControlNormal" />
 ```
 
-- Once your image is loaded call any of the `setImage**` methods with `animate` property to `true`, see example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/878a975a88e5367eb6fcec85db41ef5598486596/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L31-L32).
+- #### Create overlay tinting effect
+
+```xml
+<com.kpstv.imageloaderview.ImageLoaderView
+   ...
+   app:overlay_tinting="true"
+   app:backgroundColor="@color/..."
+   app:corner_radius="10dp"
+   app:overlay_drawable="@drawable/..."
+   app:overlay_drawable_tint="@color/fromcolor"
+   app:overlay_drawable_secondary_tint="@color/tocolor" />
+```
+
+- Once your image is loaded call any of the `setImage**` methods with `animate` property to `true`, (see example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/87be4a3f3503c0416a5d4aebe15e01627d957f1b/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L33)).
+
+- If you don't want a load effect & just directly want to set image onto view then don't set `animate` property, but make sure to call `imageview.stopAllSideEffects()` which will make sure to draw your imageView on top, (example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/87be4a3f3503c0416a5d4aebe15e01627d957f1b/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L40-L41).)
+
+| Attributes                            | Type                 |                                                                                                                               |
+| ------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `app:backgroundColor`                 | `color`              | Sets the background color of the view, default `Color.Gray`. Do not use `android:background` as it messes with corner radius. |
+| `app:anim_duration`                   | `long`               | Defines how long the animation should run, default `1200L`.                                                                   |
+| `app:corner_radius`                   | `dimension`          | Sets the corner radius of the view.                                                                                           |
+| `app:overlay_drawable`                | `reference`, `color` | Sets the overlay drawable display on top of the view.                                                                         |
+| `app:overlay_drawable_padding`        | `dimension`          | Sets the padding for the overlay drawable.                                                                                    |
+| `app:overlay_drawable_tint`           | `color`              | Sets the tint for the overlay drawable.                                                                                       |
+| `app:overlay_drawable_secondary_tint` | `color`              | Sets the secondary tint for overlay drawable. This is basically used for _overlayTintAnimation_.                              |
+| `app:overlay_tinting_duration`        | `long`               | Sets the duration for how long the tint animation to be played.                                                               |
+| `app:overlay_tinting`                 | `bool`               | Sets whether the view should start tinting animation immediately after laid out.                                              |
+| `app:ripple_color`                    | `color`              | Sets the ripple when the view is clickable.                                                                                   |
+| `app:selectable`                      | `bool`               | Sets whether the view should receieve touch events like click.                                                                |
+| `app:shimmering`                      | `bool`               | Sets whether the view should start shimmering immediately after laid out.                                                     |
+
+## Download
+
+Library is available at `MavenCentral()`.
+
+```groovy
+implementation 'io.github.kaustubhpatange:imageloaderview:<version>'
+```
 
 ## License
 
