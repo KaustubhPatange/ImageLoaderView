@@ -13,7 +13,7 @@ I had to built something similar for my client, this one is the complete version
 
 Having an effect (shown in gif) requires multiple views to be laid out. For eg: to achieve the Shimmer effect with this [library](https://github.com/facebook/shimmer-android/), you can wrap your `ImageView` inside the `ShimmerFrameLayout` (which it provides) & also the overlay `ImageView` (with circular data-usage icon), you already took 3 layout passes to draw the same thing. In places like `RecyclerView` where each draw calls are expensive we must optimize it.
 
-This view draws everything in one layout pass & also manage the animation states which would unnecessarily increase boiler-plate if done manually.
+This view solves the problem & also manage the animation states which would unnecessarily increase boilerplate if done manually.
 
 ## Usage
 
