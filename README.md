@@ -3,7 +3,7 @@
 ![build](https://github.com/KaustubhPatange/ImageLoaderView/workflows/build/badge.svg)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.kaustubhpatange/imageloaderview)
 
-An `ImageView` with cool loading effects eg: Shimmer. The library is backward compatible to API 19.
+An `ImageView` with cool loading effects eg: Shimmer. The library is backwards compatible till API 19.
 
 I had to built something similar for my client, this one is the complete version of the prototype.
 
