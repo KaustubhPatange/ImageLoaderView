@@ -34,7 +34,7 @@ internal class RippleDrawable : Drawable() {
     }
 
     fun start(pointX: Float, pointY: Float) {
-        if (callback == null) return
+        if (callback == null && isRippleDrawn) return
 
         cancel()
         this.pointX = pointX
