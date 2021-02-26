@@ -5,24 +5,19 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.annotation.DrawableRes
-import androidx.annotation.IntDef
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import androidx.core.graphics.withScale
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
-import javax.security.auth.callback.Callback
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -54,6 +49,7 @@ public class ImageLoaderView @JvmOverloads constructor(
      * Set the per cycle animation duration for overlay tint animation.
      */
     public var overlayTintAnimDuration: Long = 700
+
     /**
      * Configure ripple color to be shown. Shown only when [selectable] is true.
      */
@@ -71,7 +67,7 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * Sets whether the view should shimmer.
      */
-    public var isShimmering : Boolean = false
+    public var isShimmering: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
@@ -83,7 +79,7 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * Sets whether the overlay icon should start tinting animation.
      */
-    public var isOverlayAlphaTinting : Boolean = false
+    public var isOverlayAlphaTinting: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
@@ -112,18 +108,21 @@ public class ImageLoaderView @JvmOverloads constructor(
     private val cornerRectF = RectF() // to support API 19
     private val cornerPath = Path()
     private val rippleDrawable = RippleDrawable()
-    @AnimationType private var animationType: Int = NONE
+    @AnimationType
+    private var animationType: Int = NONE
 
-    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-            performClick()
-            return true
-        }
-        override fun onLongPress(e: MotionEvent?) {
-            performLongClick()
-            return super.onLongPress(e)
-        }
-    })
+    private val gestureDetector =
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+                performClick()
+                return true
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+                performLongClick()
+                return super.onLongPress(e)
+            }
+        })
 
     init {
         shimmerDrawable.setShimmer(Shimmer.AlphaHighlightBuilder().build())
@@ -139,9 +138,12 @@ public class ImageLoaderView @JvmOverloads constructor(
                 rippleColor = color
             }
             overlayDrawableTint = getColor(R.styleable.ImageLoaderView_overlay_drawable_tint, -1)
-            overlayDrawableSecondaryTint = getColor(R.styleable.ImageLoaderView_overlay_drawable_secondary_tint, -1)
-            overlayDrawablePadding = getDimension(R.styleable.ImageLoaderView_overlay_drawable_padding, 0f)
-            overlayTintAnimDuration = getInteger(R.styleable.ImageLoaderView_overlay_tinting_duration, 700).toLong()
+            overlayDrawableSecondaryTint =
+                getColor(R.styleable.ImageLoaderView_overlay_drawable_secondary_tint, -1)
+            overlayDrawablePadding =
+                getDimension(R.styleable.ImageLoaderView_overlay_drawable_padding, 0f)
+            overlayTintAnimDuration =
+                getInteger(R.styleable.ImageLoaderView_overlay_tinting_duration, 700).toLong()
             selectable = getBoolean(R.styleable.ImageLoaderView_selectable, false)
 
             val cornerRadius = getDimension(R.styleable.ImageLoaderView_corner_radius, 0f)
@@ -193,7 +195,11 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * After animation is complete it will automatically stop any running side effects eg: Shimmer.
      */
-    public fun setImageBitmap(bm: Bitmap?, @AnimationType animationType: Int, doAfterEnd: () -> Unit = {}) {
+    public fun setImageBitmap(
+        bm: Bitmap?,
+        @AnimationType animationType: Int,
+        doAfterEnd: () -> Unit = {}
+    ) {
         setImageBitmap(bm)
         if (animationType > 0) {
             startAnimation(doAfterEnd)
@@ -203,7 +209,11 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * After animation is complete it will automatically stop any running side effects eg: Shimmer.
      */
-    public fun setImageResource(resId: Int, @AnimationType animationType: Int, doAfterEnd: () -> Unit = {}) {
+    public fun setImageResource(
+        resId: Int,
+        @AnimationType animationType: Int,
+        doAfterEnd: () -> Unit = {}
+    ) {
         setImageResource(resId)
         if (animationType > 0) {
             startAnimation(doAfterEnd)
@@ -215,7 +225,8 @@ public class ImageLoaderView @JvmOverloads constructor(
     }
 
 
-    override fun isClickable(): Boolean = selectable && !isLoading && !isShimmering && !isOverlayAlphaTinting
+    override fun isClickable(): Boolean =
+        selectable && !isLoading && !isShimmering && !isOverlayAlphaTinting
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -266,7 +277,7 @@ public class ImageLoaderView @JvmOverloads constructor(
         canvas.restoreToCount(cornerRestore)
     }
 
-    private fun isAnyEffectOnGoing() : Boolean = isShimmering || isOverlayAlphaTinting
+    private fun isAnyEffectOnGoing(): Boolean = isShimmering || isOverlayAlphaTinting
 
     private var pointX = 0f
     private var pointY = 0f
@@ -283,7 +294,8 @@ public class ImageLoaderView @JvmOverloads constructor(
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (abs(event.x - pointX) > ViewConfiguration.getTouchSlop()
-                        || abs(event.y - pointY) > ViewConfiguration.getTouchSlop()) {
+                        || abs(event.y - pointY) > ViewConfiguration.getTouchSlop()
+                    ) {
                         rippleDrawable.cancel()
                     }
                 }
@@ -303,7 +315,8 @@ public class ImageLoaderView @JvmOverloads constructor(
 
     private fun calculateDrawableBounds() {
         val drawableWidth = (overlayDrawable?.intrinsicWidth ?: 0) - overlayDrawablePadding.toInt()
-        val drawableHeight = (overlayDrawable?.intrinsicHeight ?: 0) - overlayDrawablePadding.toInt()
+        val drawableHeight =
+            (overlayDrawable?.intrinsicHeight ?: 0) - overlayDrawablePadding.toInt()
         overlayDrawableRect.set(
             width / 2 - drawableWidth,
             height / 2 - drawableHeight,
@@ -335,30 +348,32 @@ public class ImageLoaderView @JvmOverloads constructor(
         overlayTintAnimator?.cancel()
         invalidate()
     }
+
     private fun startOverlayTintAnimation() {
         cancelOverlayTintAnimation()
 
         val drawable = overlayDrawable ?: return
         if (overlayDrawableTint == -1 || overlayDrawableSecondaryTint == -1) return
 
-        overlayTintAnimator = ValueAnimator.ofInt(overlayDrawableTint, overlayDrawableSecondaryTint).apply {
-            setEvaluator(ArgbEvaluator())
-            addUpdateListener {
-               if (isLaidOut) {
-                   val color = it.animatedValue as Int
-                   Compat.setTint(drawable, color)
-                   invalidate()
-               }
+        overlayTintAnimator =
+            ValueAnimator.ofInt(overlayDrawableTint, overlayDrawableSecondaryTint).apply {
+                setEvaluator(ArgbEvaluator())
+                addUpdateListener {
+                    if (isLaidOut) {
+                        val color = it.animatedValue as Int
+                        Compat.setTint(drawable, color)
+                        invalidate()
+                    }
+                }
+                duration = overlayTintAnimDuration
+                repeatCount = ValueAnimator.INFINITE
+                repeatMode = ValueAnimator.REVERSE
+                start()
             }
-            duration = overlayTintAnimDuration
-            repeatCount = ValueAnimator.INFINITE
-            repeatMode = ValueAnimator.REVERSE
-            start()
-        }
     }
 
     public companion object {
-        public const val NONE : Int = 0
-        public const val CIRCLE_IN : Int = 1
+        public const val NONE: Int = 0
+        public const val CIRCLE_IN: Int = 1
     }
 }

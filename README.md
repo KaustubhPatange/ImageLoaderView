@@ -3,7 +3,9 @@
 ![build](https://github.com/KaustubhPatange/ImageLoaderView/workflows/build/badge.svg)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.kaustubhpatange/imageloaderview)
 
-An `ImageView` with cool loading effects eg: Shimmer. I had built something similar for my client, this one is the complete version of the prototype.
+An `ImageView` with cool loading effects eg: Shimmer. The library is backward compatible to API 19.
+
+I had to built something similar for my client, this one is the complete version of the prototype.
 
 <img src="art/demo.gif" height="400px">
 
@@ -11,7 +13,7 @@ An `ImageView` with cool loading effects eg: Shimmer. I had built something simi
 
 Having an effect (shown in gif) requires multiple views to be laid out. For eg: to achieve the Shimmer effect with this [library](https://github.com/facebook/shimmer-android/), you can wrap your `ImageView` inside the `ShimmerFrameLayout` (which it provides) & also the overlay `ImageView` (with circular data-usage icon), you already took 3 layout passes to draw the same thing. In places like `RecyclerView` where each draw calls are expensive we must optimize it.
 
-This view draws everything in one view & also manage the animation states which would unnecessarily increase boiler-plate if done manually.
+This view draws everything in one layout pass & also manage the animation states which would unnecessarily increase boiler-plate if done manually.
 
 ## Usage
 
@@ -48,9 +50,11 @@ The repository contains the [sample](sample/) project which is basically the abo
    app:overlay_drawable_secondary_tint="@color/tocolor" />
 ```
 
-- Once your image is loaded call any of the `setImage**` methods with `animate` property to `true`, (see example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/87be4a3f3503c0416a5d4aebe15e01627d957f1b/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L33)).
+- Once your image is loaded call any of the `setImage**` methods with `animationType` property to `ImageView.CIRCLE_IN` to get the above shown effect, (see example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/0580871393d0d435d467814dc73f53b481be538e/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L34)).
 
-- If you don't want a load effect & just directly want to set image onto view then don't set `animate` property, but make sure to call `imageview.stopAllSideEffects()` which will make sure to draw your imageView on top, (example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/87be4a3f3503c0416a5d4aebe15e01627d957f1b/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L40-L41).)
+- If you don't want a load effect & just directly want to set image onto the view then don't set `animationType` property, but make sure to call `imageview.stopAllSideEffects()` which will make sure to draw your image on top, (example [here](https://github.com/KaustubhPatange/ImageLoaderView/blob/0580871393d0d435d467814dc73f53b481be538e/sample/src/main/java/com/kpstv/imageloaderview_sample/MainActivity.kt#L41-L42).)
+
+Following are the parameters you can optionally specify when inflating this class through XML. All this attributes have their equivalent property methods (Java beans) which can be called programmatically.
 
 | Attributes                            | Type                 |                                                                                                                               |
 | ------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
