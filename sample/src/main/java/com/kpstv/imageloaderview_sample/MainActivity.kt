@@ -3,6 +3,7 @@ package com.kpstv.imageloaderview_sample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import com.kpstv.imageloaderview.AnimationType
 import com.kpstv.imageloaderview.ImageLoaderView
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadImage(imageView: ImageLoaderView, resId: Int) {
         imageView.postDelayed({
             val cover = ContextCompat.getDrawable(this, resId)
-            imageView.setImageDrawable(cover, true)
+            imageView.setImageDrawable(cover, animationType = ImageLoaderView.CIRCLE_IN)
         }, 5000)
     }
 

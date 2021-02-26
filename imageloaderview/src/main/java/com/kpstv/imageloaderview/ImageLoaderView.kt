@@ -7,10 +7,12 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.annotation.DrawableRes
+import androidx.annotation.IntDef
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
@@ -20,6 +22,7 @@ import androidx.core.graphics.withSave
 import androidx.core.graphics.withScale
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
+import javax.security.auth.callback.Callback
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -109,6 +112,7 @@ public class ImageLoaderView @JvmOverloads constructor(
     private val cornerRectF = RectF() // to support API 19
     private val cornerPath = Path()
     private val rippleDrawable = RippleDrawable()
+    @AnimationType private var animationType: Int = NONE
 
     private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
@@ -175,11 +179,13 @@ public class ImageLoaderView @JvmOverloads constructor(
      */
     public fun setImageDrawable(
         drawable: Drawable?,
-        animate: Boolean,
+        @AnimationType animationType: Int,
         doAfterEnd: () -> Unit = {}
     ) {
         setImageDrawable(drawable)
-        if (animate) {
+        // Fake checking this implementation will be changed when there will be more
+        // effects available.
+        if (animationType > 0) {
             startAnimation(doAfterEnd)
         }
     }
@@ -187,9 +193,9 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * After animation is complete it will automatically stop any running side effects eg: Shimmer.
      */
-    public fun setImageBitmap(bm: Bitmap?, animate: Boolean, doAfterEnd: () -> Unit = {}) {
+    public fun setImageBitmap(bm: Bitmap?, @AnimationType animationType: Int, doAfterEnd: () -> Unit = {}) {
         setImageBitmap(bm)
-        if (animate) {
+        if (animationType > 0) {
             startAnimation(doAfterEnd)
         }
     }
@@ -197,9 +203,9 @@ public class ImageLoaderView @JvmOverloads constructor(
     /**
      * After animation is complete it will automatically stop any running side effects eg: Shimmer.
      */
-    public fun setImageResource(resId: Int, animate: Boolean, doAfterEnd: () -> Unit = {}) {
+    public fun setImageResource(resId: Int, @AnimationType animationType: Int, doAfterEnd: () -> Unit = {}) {
         setImageResource(resId)
-        if (animate) {
+        if (animationType > 0) {
             startAnimation(doAfterEnd)
         }
     }
@@ -252,7 +258,10 @@ public class ImageLoaderView @JvmOverloads constructor(
             }
         }
 
-        rippleDrawable.draw(canvas)
+        if (rippleDrawable.isRippleDrawn) {
+            rippleDrawable.draw(canvas)
+            invalidate()
+        }
 
         canvas.restoreToCount(cornerRestore)
     }
@@ -265,12 +274,12 @@ public class ImageLoaderView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null && isClickable) {
             gestureDetector.onTouchEvent(event)
-
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     pointX = event.x
                     pointY = event.y
                     rippleDrawable.start(event.x, event.y)
+                    invalidate()
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (abs(event.x - pointX) > ViewConfiguration.getTouchSlop()
@@ -346,5 +355,10 @@ public class ImageLoaderView @JvmOverloads constructor(
             repeatMode = ValueAnimator.REVERSE
             start()
         }
+    }
+
+    public companion object {
+        public const val NONE : Int = 0
+        public const val CIRCLE_IN : Int = 1
     }
 }
