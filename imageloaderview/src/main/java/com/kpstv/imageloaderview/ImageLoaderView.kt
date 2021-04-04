@@ -113,11 +113,10 @@ public class ImageLoaderView @JvmOverloads constructor(
 
     private val gestureDetector =
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
                 performClick()
-                return true
+                return isClickable
             }
-
             override fun onLongPress(e: MotionEvent?) {
                 performLongClick()
                 return super.onLongPress(e)

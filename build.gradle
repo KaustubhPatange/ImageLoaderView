@@ -2,7 +2,7 @@ apply plugin: 'io.codearte.nexus-staging'
 
 buildscript {
     ext.kotlin_version = "1.4.30"
-    ext.library_version = "0.5"
+    ext.library_version = "0.6"
     repositories {
         google()
         jcenter()
@@ -23,4 +23,17 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task publishLibraryToCentralMaven {
+    def t1 = tasks.getByPath("imageloaderview:publishReleasePublicationToSonatypeRepository")
+    def t2 = tasks.getByName("closeRepository")
+    def t3 = tasks.getByName("releaseRepository")
+
+    t2.mustRunAfter(t1)
+    t3.mustRunAfter(t2)
+
+    dependsOn(t1)
+    dependsOn(t2)
+    dependsOn(t3)
 }

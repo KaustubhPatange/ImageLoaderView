@@ -2,6 +2,7 @@ package com.kpstv.imageloaderview_sample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.kpstv.imageloaderview.AnimationType
 import com.kpstv.imageloaderview.ImageLoaderView
