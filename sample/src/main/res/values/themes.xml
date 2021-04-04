@@ -25,6 +25,7 @@
     </style>
 
     <style name="ImageLoaderTheme_overlayTint">
+        <item name="disable_ripple">true</item>
         <item name="selectable">true</item>
         <item name="overlay_drawable">@drawable/ic_baseline_data_usage_24</item>
         <item name="overlay_drawable_tint">@color/teal_200</item>

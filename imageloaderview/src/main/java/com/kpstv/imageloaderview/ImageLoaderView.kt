@@ -294,7 +294,7 @@ public class ImageLoaderView @JvmOverloads constructor(
                 MotionEvent.ACTION_DOWN -> {
                     pointX = event.x
                     pointY = event.y
-                    if (disableRipple) {
+                    if (!disableRipple) {
                         rippleDrawable.start(event.x, event.y)
                         invalidate()
                     }
@@ -303,7 +303,7 @@ public class ImageLoaderView @JvmOverloads constructor(
                     if (abs(event.x - pointX) > ViewConfiguration.getTouchSlop()
                         || abs(event.y - pointY) > ViewConfiguration.getTouchSlop()
                     ) {
-                        if (disableRipple) {
+                        if (!disableRipple) {
                             rippleDrawable.cancel()
                         }
                     }
