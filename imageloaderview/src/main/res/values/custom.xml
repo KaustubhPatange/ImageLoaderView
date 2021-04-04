@@ -11,6 +11,7 @@
         <attr name="anim_duration" format="integer" />
         <attr name="corner_radius" format="dimension" />
         <attr name="ripple_color" format="reference|color" />
+        <attr name="disable_ripple" format="boolean" />
         <!--  This will show ripple effect after click -->
         <attr name="selectable" format="boolean" />
         <attr name="backgroundColor" format="color" />

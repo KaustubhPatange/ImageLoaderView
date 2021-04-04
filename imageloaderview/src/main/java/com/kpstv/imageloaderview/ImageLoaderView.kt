@@ -60,6 +60,11 @@ public class ImageLoaderView @JvmOverloads constructor(
         }
 
     /**
+     * Setting this to true will not draw ripple event after it is [selectable].
+     */
+    public var disableRipple: Boolean = false
+
+    /**
      * Makes the view clickable to accept touch inputs.
      */
     public var selectable: Boolean = false
@@ -129,21 +134,22 @@ public class ImageLoaderView @JvmOverloads constructor(
         rippleDrawable.callback = this
 
         context.withStyledAttributes(attrs, R.styleable.ImageLoaderView, defStyleAttr) {
-            animDuration = getInteger(R.styleable.ImageLoaderView_anim_duration, 1200).toLong()
-            viewBackgroundColor = getColor(R.styleable.ImageLoaderView_backgroundColor, Color.GRAY)
+            animDuration = getInteger(R.styleable.ImageLoaderView_anim_duration, animDuration.toInt()).toLong()
+            viewBackgroundColor = getColor(R.styleable.ImageLoaderView_backgroundColor, viewBackgroundColor)
             overlayDrawable = getDrawable(R.styleable.ImageLoaderView_overlay_drawable)?.mutate()
             if (hasValue(R.styleable.ImageLoaderView_ripple_color)) {
-                val color = getColor(R.styleable.ImageLoaderView_ripple_color, Color.WHITE)
+                val color = getColor(R.styleable.ImageLoaderView_ripple_color, rippleColor)
                 rippleColor = color
             }
-            overlayDrawableTint = getColor(R.styleable.ImageLoaderView_overlay_drawable_tint, -1)
+            overlayDrawableTint = getColor(R.styleable.ImageLoaderView_overlay_drawable_tint, overlayDrawableTint)
             overlayDrawableSecondaryTint =
-                getColor(R.styleable.ImageLoaderView_overlay_drawable_secondary_tint, -1)
+                getColor(R.styleable.ImageLoaderView_overlay_drawable_secondary_tint, overlayDrawableSecondaryTint)
             overlayDrawablePadding =
-                getDimension(R.styleable.ImageLoaderView_overlay_drawable_padding, 0f)
+                getDimension(R.styleable.ImageLoaderView_overlay_drawable_padding, overlayDrawablePadding)
             overlayTintAnimDuration =
-                getInteger(R.styleable.ImageLoaderView_overlay_tinting_duration, 700).toLong()
-            selectable = getBoolean(R.styleable.ImageLoaderView_selectable, false)
+                getInteger(R.styleable.ImageLoaderView_overlay_tinting_duration, overlayTintAnimDuration.toInt()).toLong()
+            selectable = getBoolean(R.styleable.ImageLoaderView_selectable, selectable)
+            disableRipple = getBoolean(R.styleable.ImageLoaderView_disable_ripple, disableRipple)
 
             val cornerRadius = getDimension(R.styleable.ImageLoaderView_corner_radius, 0f)
             for (i in cornerArray.indices) {
@@ -288,14 +294,18 @@ public class ImageLoaderView @JvmOverloads constructor(
                 MotionEvent.ACTION_DOWN -> {
                     pointX = event.x
                     pointY = event.y
-                    rippleDrawable.start(event.x, event.y)
-                    invalidate()
+                    if (disableRipple) {
+                        rippleDrawable.start(event.x, event.y)
+                        invalidate()
+                    }
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (abs(event.x - pointX) > ViewConfiguration.getTouchSlop()
                         || abs(event.y - pointY) > ViewConfiguration.getTouchSlop()
                     ) {
-                        rippleDrawable.cancel()
+                        if (disableRipple) {
+                            rippleDrawable.cancel()
+                        }
                     }
                 }
             }

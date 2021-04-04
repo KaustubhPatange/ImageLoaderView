@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             val cover = ContextCompat.getDrawable(this, resId)
             imageView.setImageDrawable(cover)
             imageView.stopAllSideEffects()
+            imageView.setOnClickListener { Toast.makeText(it.context, "Clicked", Toast.LENGTH_SHORT).show() }
         }, 5000)
     }
 }
