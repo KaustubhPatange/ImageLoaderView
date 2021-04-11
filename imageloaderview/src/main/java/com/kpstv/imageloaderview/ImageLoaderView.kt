@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -225,8 +226,18 @@ public class ImageLoaderView @JvmOverloads constructor(
         }
     }
 
+    override fun getBackground(): Drawable = ColorDrawable(viewBackgroundColor)
+
+    override fun setBackground(background: Drawable?) {
+        if (background is ColorDrawable) {
+            viewBackgroundColor = background.color
+            invalidate()
+        }
+    }
+
     override fun setBackgroundColor(color: Int) {
         viewBackgroundColor = color
+        invalidate()
     }
 
 
@@ -267,6 +278,8 @@ public class ImageLoaderView @JvmOverloads constructor(
                     overlayDrawable?.draw(canvas)
                     canvas.restoreToCount(count)
                 }
+            } else if (drawable == null) {
+                drawEmptyView(canvas)
             }
             if (isShimmering) {
                 shimmerDrawable.draw(canvas)
@@ -312,6 +325,13 @@ public class ImageLoaderView @JvmOverloads constructor(
             return isClickable
         }
         return false
+    }
+
+    private fun drawEmptyView(canvas: Canvas) {
+        canvas.drawColor(viewBackgroundColor)
+        val overlay = overlayDrawable ?: return
+        if (overlayDrawableTint != -1) Compat.setTint(overlay, overlayDrawableTint)
+        overlay.draw(canvas)
     }
 
     private fun drawClipPath(canvas: Canvas) {
